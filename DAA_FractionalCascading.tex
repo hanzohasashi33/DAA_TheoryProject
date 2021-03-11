@@ -1,0 +1,202 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsfonts,amsmath,amssymb}
+\usepackage[none]{hyphenat}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{enumitem}
+\usepackage[noline,boxed]{algorithm2e}
+\usepackage[skins]{tcolorbox}
+\usepackage[nottoc,notlot,notlof]{tocbibind}
+
+
+\pagestyle{fancy}
+\fancyhead{}
+\fancyfoot{}
+\fancyhead[L]{\slshape \MakeUppercase{}}
+\fancyhead[R]{\slshape}
+\fancyfoot[C]{\thepage}
+%\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+%\parindent 0ex
+\setlength{\parindent}{4em}
+\setlength{\parskip}{1em}
+\renewcommand{\baselinestretch}{1.5}
+
+\begin{document}
+
+\begin{titlepage}
+\begin{center}
+\vspace*{0.5cm}
+\Large{\textbf{DAA Theory Project}}\\
+\Large{\textbf{latex practice}}\\
+\vfill
+\line(1,0){400}\\[1mm]
+\huge{\textbf{Fractional Cascading}}\\[3mm]
+\Large{\textbf{-This is a sample subtitle -}}\\[1mm]
+\line(1,0){400}\\
+\vfill
+By \\ 
+\today \\
+\end{center}
+\end{titlepage}
+
+\tableofcontents
+\thispagestyle{empty}
+\clearpage
+\setcounter{page}{1}
+
+\section{Abstract}
+        In this paper, we investigate the \textit{Fractional Cascading} technique in building range trees and for fast searching of an element in multiple arrays. In this venture, we introduce and examine \textit{Linear Search}, \textit{Binary Search}, \textit{Bridge Building} and \textit{Auxiliary lists}. We also look at some of the \textit{applications} of this technique, and suggest data structures for its efficient realisation. 
+
+\section{Problem Statement}
+\textit{Fractional cascading: }You are given an input of k ordered lists of numbers, each of size n as well as a query value x. The problem's output is
+to return, for each list, True if the query value appears in the list and
+False if it does not. For example, if the input is:
+\begin{enumerate}[label=(\alph*)]
+    \item List $L_1$: $[3,4,6]$
+    \item List $L_2$: $[2,6,7]$
+    \item List $L_3$: $[2,4,9]$
+\end{enumerate}
+and the query value is 4, then the expected output is [\textit{True},\textit{False},\textit{True}]. \\
+\textbf{Give an algorithm to solve the fractional cascading problem.}
+
+
+
+\section{Brute Force}
+\subsection{Linear Search}
+
+Linear search is the most basic search technique, wherein we sequentially compare each array element to the target element. In the worst case of the target element not coinciding with \textit{any} list element, the algorithm would reach the end of the list and we would report an unsuccessful search. \\
+As each element is compared at most once, the time complexity is $O(n)$, where $n$ is the size of the list. \\ \\
+
+This algorithm forms the basis of the simplest solution to our problem: We just run linear search on each of the $k$ lists. If we have $q$ queries, this takes $O(q \cdot k \cdot n)$ time, which is a lot and in real world situations, if $k$, $q$, and $n$ are even moderately large, the time taken would become astronomical. \\ 
+
+\begin{tcolorbox}[blanker,width=(\linewidth-3.5cm)]
+\begin{algorithm}[H]
+    \SetAlgoLined
+    \KwData{k arrays of size n and a query element x}
+    \KwResult{Boolean array regarding whether element is present in the indiced array or not}
+    
+    \SetKwFunction{LinearSearch}{LinearSearch}
+    \SetKwFunction{FMain}{Main}
+    
+    \SetKwProg{Fn}{Function}{:}{\KwRet \textit{False}}
+    \Fn{\LinearSearch{Array,x}}
+    {
+        \For{$i\leftarrow 0$ \KwTo $n$}
+        {
+            \If{\textit{Array}[i] == x}
+                {\KwRet \textit{True}\;}
+        }
+    }
+    
+    
+    
+    \SetKwProg{Fn}{Function}{:}{\KwRet 0}
+    \Fn{\FMain}{
+        output = [] \;
+        \For{$i\leftarrow 0$ \KwTo $k$}
+        {
+            output.append(linearSearch(input[i],x);
+        }
+    }
+
+% \caption{Brute Force method by doing k linear searches}
+\end{algorithm}
+\end{tcolorbox}
+
+Note that, however, this approach does not take into account any relevant information given to us in the question which can speed up this algorithm. It is given that the \textit{lists are sorted}, so we can exploit this property and employ a faster searching technique to solve this problem in a better way: \textit{Binary Search}
+
+
+
+
+
+\section{Improved Brute Force}
+\subsection{Binary Search}
+
+
+
+Binary search is another searching algorithm that works correctly only on sorted arrays. \\
+It begins by comparing the target element with the element at the middle of the list. 
+\begin{itemize}
+    \item If they are equal, we have found the target in the list
+    \item If the target is larger, and as the list is sorted, we must now turn our attention to the \textit{right half} of the list
+    \item Similarly, if the target is smaller, we must focus on the \textit{left half} of the list.
+\end{itemize}
+
+In the worst case, Binary Search will take $O(\log n)$ comparisons, where n is the size of the list. \\ \\
+
+
+To improve the performance of the Brute Force subroutine, we replace the Linear Search subroutine with the aforementioned Binary Search subroutine. If we have $q$ queries, this takes $O(q \cdot k \cdot \log n)$ time, which is certainly a lot better than the initial brute force algorithm, but can yet be improved further.
+
+\begin{tcolorbox}[blanker,width=(\linewidth-3.5cm)]
+\begin{algorithm}[H]
+    \SetAlgoLined
+    \KwData{k arrays of size n and a query element x}
+    \KwResult{Boolean array regarding whether element is present in the indiced array or not}
+    
+    \SetKwFunction{BinarySearch}{BinarySearch}
+    \SetKwFunction{FMain}{Main}
+    
+    \SetKwProg{Fn}{Function}{:}{\textbf{end Function}}
+    \Fn{\BinarySearch{Array,x,left,right}}
+    {
+        \If{right $\geq$ left}{
+            mid=$\frac{(left+right)}{2}$\;
+            \If{Array[mid] == x}{
+                \KwRet \textit{True}\;
+            }
+            \If{Array[mid] $>$ x}{
+                BinarySearch(Array,x,left,mid-1)\;
+            }
+            \Else{
+                BinarySearch(Array,x,mid+1,right)\;
+            }  
+        }
+        \Else{
+            \KwRet \textit{False}\;
+        }
+        
+    }
+    
+    
+    
+    \SetKwProg{Fn}{Function}{:}{\KwRet 0}
+    \Fn{\FMain}{
+        output = [] \;
+        \For{$i\leftarrow 0$ \KwTo $k$}
+        {
+            output.append(BinarySearch(input[i],x);
+        }
+    }
+
+% \caption{Brute Force method by doing k linear searches}
+\end{algorithm}
+\end{tcolorbox}
+
+
+
+\section{}
+
+
+
+
+
+
+
+
+
+
+
+\pagebreak 
+\begin{thebibliography}{}
+
+\bibitem{DBHS1}
+Alcosser, Harvard.
+``Diamond Bar High School.''
+
+\end{thebibliography}
+
+\end{document}
