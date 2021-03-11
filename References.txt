@@ -1,0 +1,2 @@
+https://shantoroy.com/latex/how-to-write-algorithm-in-latex/
+http://ctan.mirrors.hoobly.com/macros/latex/contrib/algorithm2e/doc/algorithm2e.pdf
