@@ -6,6 +6,7 @@
 \usepackage{graphicx}
 \usepackage{float}
 \usepackage{enumitem}
+\usepackage{hyperref}
 \usepackage[noline,boxed]{algorithm2e}
 \usepackage[skins]{tcolorbox}
 \usepackage[nottoc,notlot,notlof]{tocbibind}
@@ -22,7 +23,7 @@
 
 %\parindent 0ex
 \setlength{\parindent}{4em}
-\setlength{\parskip}{1em}
+\setlength{\parskip}{0em}
 \renewcommand{\baselinestretch}{1.5}
 
 \begin{document}
@@ -30,16 +31,18 @@
 \begin{titlepage}
 \begin{center}
 \vspace*{0.5cm}
-\Large{\textbf{DAA Theory Project}}\\
-\Large{\textbf{latex practice}}\\
+\Large{\textbf{Design and Analysis of Algorithms}}\\
+\Large{\textbf{Theory Project}}\\
 \vfill
 \line(1,0){400}\\[1mm]
 \huge{\textbf{Fractional Cascading}}\\[3mm]
-\Large{\textbf{-This is a sample subtitle -}}\\[1mm]
+\Large{\textbf{An algorithmic approach}}\\[1mm]
 \line(1,0){400}\\
 \vfill
 By \\ 
-\today \\
+IMT2019051 Mani Nandadeep Medicharla \\
+IMT2019063 R Prasannavenkatesh \\
+IMT2019525 Vijay Jaisankar \\
 \end{center}
 \end{titlepage}
 
@@ -110,7 +113,7 @@ This algorithm forms the basis of the simplest solution to our problem: We just 
 Note that, however, this approach does not take into account any relevant information given to us in the question which can speed up this algorithm. It is given that the \textit{lists are sorted}, so we can exploit this property and employ a faster searching technique to solve this problem in a better way: \textit{Binary Search}
 
 
-
+%------------------------------------------------------------------------------%
 
 
 \section{Improved Brute Force}
@@ -177,25 +180,86 @@ To improve the performance of the Brute Force subroutine, we replace the Linear 
 \end{tcolorbox}
 
 
+%------------------------------------------------------------------------------%
 
-\section{}
+\section{Bridge Building}
+\subsection{Introduction to bridges}
+A \textit{bridge} is a pointer from an element $a_i$ of $A_i$ to an element $a_j$ of $A_{i+1}$ where  $|a_i-a_j|$ is \textbf{small}, where $A$ is the list and $a$ represents an element of the array. \\ 
+By \textit{small}, we mean an element that is either of the same value, or with the smallest difference to the one considered as reference. \\ 
+
+Once we locate the answer to a query in one array, we should be able to \textbf{follow a bridge} to a key that is close to the answer in the next array. \\
+In the best case, we follow a bridge from the answer to the query in $A_i$ to a key in $A_{i+1}$ and then from there locate the answer in $A_{i+1}$, all in constant time. If we can do \textit{this},then once we have the answer in $A_1$ we can find the answer in the remaining $k-1$ sorted arrays in $O(k)$ time complexity. \\
+
+From a technical standpoint, we \textit{implement} this method as follows: \\
+For every element $e$ in the first array, give $e$ a pointer to the element with the \textit{same value} in the second array or if the value doesn't exist, the \textit{predecessor}. This is called bridge building between $A_i$ and $A_{i+1}$. Then, once we've found the item in the first array, we can just follow these pointers down in order to figure out where the item is in all the other arrays. To find the answer in $A_1$, we can just use a balanced binary search tree,thus making the overall time complexity of our algorithm $O(\log n + k)$ per query.
 
 
 
 
 
+\subsection{Algorithm}
+\begin{tcolorbox}[blanker,width=(\linewidth-3.5cm)]
+\begin{algorithm}[H]
+    \SetAlgoLined
+    \KwData{k arrays of size n and a query element x}
+    \KwResult{Boolean array regarding whether element is present in the indiced array or not}
+    
+    \SetKwFunction{BuildBridges}{BuildBridges}
+    \SetKwFunction{FMain}{Main}
+    
+    \SetKwProg{Fn}{Function}{:}{\textbf{end Function}}
+    \Fn{\BuildBridges{Array,x}}
+    {
+        \For{$i\leftarrow 0$ \KwTo $k-1$}{
+            \For{$j\leftarrow 0$ \KwTo $n$}{
+                Build bridge from Array[i][j] to Array[i+1][x] where $|$Array[i+1][y] - Array[i][j]$|$ is small. In this approach, if both predecessor and successor exists, then we take predecessor first.
+            }
+        }
+    }
+    
+    
+    \SetKwProg{Fn}{Function}{:}{\KwRet 0}
+    \Fn{\FMain}{
+        output = [] \;
+        BuildBridges(input,x) \;
+        output.append(BinarySearch(Array[i],x)) \;
+        Once the element is found in the first array, follow the bridge path till the final array and append it to the output. \;
+    }
+
+% \caption{Brute Force method by doing k linear searches}
+\end{algorithm}
+\end{tcolorbox}
+% \subsection{Proof of correctness}
+\subsection{Shortcomings}
+
+This method seems like a very interesting and efficient alternative to solve this problem. However, there are some glaring weaknesses to this approach, the most important one being the fact that certain classes of inputs render this method useless. \\
+In particular, if a later list is completely \textit{in between} two elements of the first list, we have to redo the entire search, as the pointer pre-processing gives us no information that we didn't already know.
+
+\textbf{Let's consider a simple example to elucidate this statement} \\
+Consider the case where $k = 2$. Everything would be better if only we could guarantee that the first list contained the right elements to give you useful information about the second array. We could just merge the arrays, but if we did this in the general case we'd end up with a totally merged array of size kn, which is not so good if k is large.
+
+Even if each time we find an answer in the sorted Array $A_i$, we follow the bridge pointer from it as well as from the key above it we are still left with the entire contents of catalog $A_{i+1}$ to search. This continues through the entire set of k catalogs.If we search each catalog by doing a linear scan from the point at which the bridge told us to begin,the total search time will be O(nk).Even if we build a balanced search tree over all elements in $A{i+1}$ that appear between two consecutive bridge pointers from $A_i$ the query time will still be O(klogn) which is similar to performing k binary searches to get the query element.
 
 
 
-
+%------------------------------------------------------------------------------%
+\section{Fractional Cascading}
 
 
 \pagebreak 
 \begin{thebibliography}{}
 
-\bibitem{DBHS1}
-Alcosser, Harvard.
-``Diamond Bar High School.''
+\bibitem{Wikipedia Article}
+\href{https://en.wikipedia.org/wiki/Fractional_cascading}{Wikipedia article on Fractional Cascading}
+
+\bibitem{Fractional Cascading Demo}
+\href{https://ravix339.github.io/FractionalCascading/}{Practical Demo Application to demonstrate Fraction cascading}
+
+\bibitem{Opengenus Reference}
+\href{https://iq.opengenus.org/fractional-cascading-in-binary-search/amp/}{Opengenus reference on Fraction Cascading}
+
+\bibitem{Arbit Blog Essay}
+\href{https://arpitbhayani.me/blogs/fractional-cascading}{An essay on fractional-cascading by arpit bhayani}
 
 \end{thebibliography}
 
