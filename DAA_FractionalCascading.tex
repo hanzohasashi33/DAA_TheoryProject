@@ -245,6 +245,32 @@ Even if each time we find an answer in the sorted Array $A_i$, we follow the bri
 %------------------------------------------------------------------------------%
 \section{Fractional Cascading}
 
+Define new lists $L'_1, . . . , L'_k$ by $L'_k$ = $L_k$, and for $i < k$, let $L'_i$ be the result of merging $L'_{i}$ with every other element of $L'_{i+1}$ Note that $|L'_i| = |L_i| +\frac{1}{2}|L'_{i+1}|$, so $|Li| \leq 2n = O(n).$. 
+For each $i < k$, keep two pointers from each element. If the element came from $L_i$, keep a pointer to the two neighboring elements from $L'_{i+1}$, and vice versa. These pointers allow us to take information of our placement in $L'_i$ and in O(1) turn it into information about our placement in $L_i$ and our placement in half of $L'_{i+1}$.
+Now to make a query for x in all k lists is quite straightforward. 
+First, query $L'_1$ for the location of x with a binary search. Now to find the location of x in $L'_{i+1}$ from the location of x in $L'_i$, find the two neighboring elements in $L'{i+1}$ that came from $L'_i$ using the extra pointers. Then these elements have exactly one element between them in $L'_{i+1}$. To find our actual location in $L'_{i+1}$, we simply do a comparison with that intermediate element. This allows us to turn the information about
+x’s location in $L'_i$ into information about x’s location in $L'_{i+1}$ in O(1) time, and we can retrieve x’s location in $L_i$ from its location in $L'_i$ in O(1), and thus we can query for x in all k lists in O(k + log n) time.
+
+\section{Applications}
+This technique has various applications in numerous fields. \\
+\begin{enumerate}
+    \item Computational Geometry
+    \begin{itemize}
+        \item Half-Range Plane Reporting
+        \item Explicit Searching 
+        \item Point Location
+    \end{itemize}
+    \item Networks
+    \begin{itemize}
+        \item Fast Packet filtering in internet routers.
+        \item data distribution and retrieval in sensor networks
+    \end{itemize}
+    \item Linear Range Queries
+        \begin{itemize}
+            \item As an accompaniment to \textit{Segment Trees}
+        \end{itemize}
+\end{enumerate}
+
 
 \pagebreak 
 \begin{thebibliography}{}
