@@ -272,7 +272,7 @@ After we perform the aforementioned pre-processing, querying $x$ in all $k$ list
 First, we make a query for x in $M_1$ using a binary search in $O(\log n)$. Once we have found the position of $x$ in $M_1$, we use the \textit{cascaded pointers} to find the position of x in $M_2$. Generalising this step, once we found the position of x in $M_i$ where i $<$ k, we use the cascaded pointers to find the position of x in $M_{i+1}$. \\ \\
 To find the location in $M_{i+1}$, we find the \textit{two neighbouring elements} in $M_{i+1}$ that came from $M_i$ using the pointers we had assigned during the pre-processing phase. Now, these elements will have \textit{exactly one element} between them in $M_{i+1}$. \textbf{Therefore, to find the exact location in $M_{i+1}$, we just have to do a simple comparison with only the intermediate element}. This is the significance of taking $\alpha$ = $\frac{1}{2}$ as we just have to perform only one comparison, which takes $O(1)$ time, and hence we can retrieve the location of $x$ in $A_i$ from its location in $M_i$ again in $O(1)$ time. \\ \\
 
-Hence, the time to perform the preprocessing for fractional cascading is O(nk), the total search time per query is $O(k+\log n)$ and, the total time taken by the Fractional Cascading algorithm is $O(q(k+\logn))$ for $q$ queries, which is an astronomical improvement over the previous algorithms.
+Hence, the time to perform the preprocessing for fractional cascading is O(nk), the total search time per query is $O(k+log n)$ and, the total time taken by the Fractional Cascading algorithm is $O(q(k+\logn))$ for $q$ queries, which is an astronomical improvement over the previous algorithms.
 
 
 
@@ -281,6 +281,36 @@ Hence, the time to perform the preprocessing for fractional cascading is O(nk), 
 %Now to make a query for x in all k lists is quite straightforward. 
 %First, query $L'_1$ for the location of x with a binary search. Now to find the location of x in $L'_{i+1}$ from the location of x in $L'_i$, find the two neighboring elements in $L'{i+1}$ that came from $L'_i$ using the extra pointers. Then these elements have exactly one element between them in $L'_{i+1}$. To find our actual location in $L'_{i+1}$, we simply do a comparison with that intermediate element. This allows us to turn the information about
 %x’s location in $L'_i$ into information about x’s location in $L'_{i+1}$ in O(1) time, and we can retrieve x’s location in $L_i$ from its location in $L'_i$ in O(1), and thus we can query for x in all k lists in O(k + log n) time.
+
+
+\section{PseudoCode}
+\begin{tcolorbox}[blanker,width=(\linewidth-3.5cm)]
+\begin{algorithm}[H]
+    \SetAlgoLined
+    \KwData{k arrays of size n and a query element x}
+    \KwResult{Boolean array regarding whether element is present in the indiced array or not}
+
+    \SetKwFunction{FFractionalCascading}{Fractional\_Cascading}
+    \SetKwProg{Fn}{Function}{:}{\KwRet output}
+    \Fn{\FFractionalCascading}{
+        output = [] \;
+        MergedArrays = [] \;
+        % // Insert all elements of the last array at position 0 of MergedArrays % \;
+        MergedArrays = MergedArrays.insert(0,all elements of the last array) \;
+        MergedArrays = MergedArrays.insert(0,merge the below array with the above array by only taking alternate elements of the below array) \;
+        Generate the boundry case predecessors and successors; $- \infty$ and $+ \infty$ \;
+        For every element assign a two sized array to hold the pointers to the locations. \;
+        For every element in the merged arrays, assign locations based on the presence of that particular element in $A_i$ and $M_{i+1}$. Hence the pointer array's first element would be the location of the particular element in $A_i$ and the second element would be the location of the particular element in $M_{i+1}$. \; 
+        
+        The gist of the algorithm is that we check for the position of the target element in the merged array, then we follow the pointers down to get the positions of the predecessors of the said target element in all of the k arrays. Let's call this array $positions_k$ \;
+        The last step is to scan through $positions_k$, and see if the respective predecessor is actually the given target, or not. This generates the $[True,False]$ format given in the question and append it to the output array.
+    }
+    
+    
+
+% \caption{Brute Force method by doing k linear searches}
+\end{algorithm}
+\end{tcolorbox}
 
 
 %------------------------------------------------------------------------------%
