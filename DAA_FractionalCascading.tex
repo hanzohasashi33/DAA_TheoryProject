@@ -184,14 +184,15 @@ To improve the performance of the Brute Force subroutine, we replace the Linear 
 
 \section{Bridge Building}
 \subsection{Introduction to bridges}
-A \textit{bridge} is a pointer from an element $a_i$ of $A_i$ to an element $a_j$ of $A_{i+1}$ where  $|a_i-a_j|$ is \textbf{small}, where $A$ is the list and $a$ represents an element of the array. \\ 
-By \textit{small}, we mean an element that is either of the same value, or with the smallest difference to the one considered as reference. \\ 
+A \textit{bridge} is a pointer from an element $a_i$ of $A_i$ to an element $a_j$ of $A_{i+1}$ where  $|a_i-a_j|$ is \textbf{small}, where $A$ is the list and $a$ represents an element of the array. By \textit{small}, we mean an element that is either of the same value, or with the smallest difference to the one considered as reference. \\ 
 
 Once we locate the answer to a query in one array, we should be able to \textbf{follow a bridge} to a key that is close to the answer in the next array. \\
 In the best case, we follow a bridge from the answer to the query in $A_i$ to a key in $A_{i+1}$ and then from there locate the answer in $A_{i+1}$, all in constant time. If we can do \textit{this},then once we have the answer in $A_1$ we can find the answer in the remaining $k-1$ sorted arrays in $O(k)$ time complexity. \\
 
 From a technical standpoint, we \textit{implement} this method as follows: \\
 For every element $e$ in the first array, give $e$ a pointer to the element with the \textit{same value} in the second array or if the value doesn't exist, the \textit{predecessor}. This is called bridge building between $A_i$ and $A_{i+1}$. Then, once we've found the item in the first array, we can just follow these pointers down in order to figure out where the item is in all the other arrays. To find the answer in $A_1$, we can just use a balanced binary search tree,thus making the overall time complexity of our algorithm $O(\log n + k)$ per query.
+
+
 
 
 
@@ -245,11 +246,45 @@ Even if each time we find an answer in the sorted Array $A_i$, we follow the bri
 %------------------------------------------------------------------------------%
 \section{Fractional Cascading}
 
-Define new lists $L'_1, . . . , L'_k$ by $L'_k$ = $L_k$, and for $i < k$, let $L'_i$ be the result of merging $L'_{i}$ with every other element of $L'_{i+1}$ Note that $|L'_i| = |L_i| +\frac{1}{2}|L'_{i+1}|$, so $|Li| \leq 2n = O(n).$. 
-For each $i < k$, keep two pointers from each element. If the element came from $L_i$, keep a pointer to the two neighboring elements from $L'_{i+1}$, and vice versa. These pointers allow us to take information of our placement in $L'_i$ and in O(1) turn it into information about our placement in $L_i$ and our placement in half of $L'_{i+1}$.
-Now to make a query for x in all k lists is quite straightforward. 
-First, query $L'_1$ for the location of x with a binary search. Now to find the location of x in $L'_{i+1}$ from the location of x in $L'_i$, find the two neighboring elements in $L'{i+1}$ that came from $L'_i$ using the extra pointers. Then these elements have exactly one element between them in $L'_{i+1}$. To find our actual location in $L'_{i+1}$, we simply do a comparison with that intermediate element. This allows us to turn the information about
-x’s location in $L'_i$ into information about x’s location in $L'_{i+1}$ in O(1) time, and we can retrieve x’s location in $L_i$ from its location in $L'_i$ in O(1), and thus we can query for x in all k lists in O(k + log n) time.
+\subsection{Intuition behind Fractional Cascading}
+Because of the shortcomings of the \textit{Bridge Building} algorithm, i.e the case where every element of the "below array is in between all the elements of the "above" array.(\textbf{Note}: We say that array 1 is “above” array 2 and array 2 is “below” array 1. Therefore, an Array $j$ is below Array $i$ if $j > i$. In this case, we either have to do $k$ binary searches, or we have to merge all $n$ elements of the below array recursively and maintain bridges, to get the output. This will warrant a sub-optimal, extra time complexity of $O(k \cdot n)$, as we are going through \textit{each} array element iteratively to merge it.
+
+To avoid this problem of merging all elements and getting $O(k \cdot n)$ time complexity, we start with the \textit{lowest} list in the sequence and select every $i$th element, where i = $\frac{1}{\alpha}$ and insert it into the array above it while still maintaining sorted order. \\
+We then mark that element as \textit{promoted} and keep a pointer from it, to its original position in the bottom list. This operation of taking every $i$th element and \textit{promoting} it to the array above it is called \textit{cascading}, and since we are only promoting a fraction of the elements, the algorithm is called \textbf{fractional cascading}.
+
+For selecting, $\alpha$, we can choose a variety of fractions, however $\alpha$ = $\frac{1}{2}$ seems most appropriate because, we will have to compare only 2 elements while searching, after prepocessing. This will also ensure that our time complexity stays low, and easily computable.
+
+
+\subsection{Algorithmic Approach to Fractional Cascading}
+
+Let the input be specified by $k$ $n$-element arrays, $A_1,A_2,\dots,A_k$, Let the query element value be $x$.
+Let $M_1,M_2,\dots,M_k$ be the new \textit{merged arrays} such that $M_k = A_k$ and $\forall i < k$, $M_i$ is defined as the result of merging $M_i$ with every $\frac{1}{\alpha}$th element of $M_{i+1}$. \\ \\
+As we're taking $\alpha$ = $\frac{1}{2}$, $M_i$ will be the result of merging $M_i$ with every alternate element of $M_{i+1}$. For every \textbf{cascaded element} of $M_i$ where i $<$ k, we keep two pointers from each element which are derived as follows:
+\begin{itemize}
+    \item If the element came from the same array, i.e, $A_i$, we keep a pointer to the two nearest neighbouring elements from $M_{i+1}$
+    \item if the element has been cascaded, we keep a pointer to the predecessor of the element in $M_i$
+\end{itemize}
+These pointers helps to find the position of the query element x in $A_i$ and also in the cascaded arrays below in $O(1)$ time. \\ \\
+\textbf{Note}: Since we are merging every alternate element of the below list to the current list, we have 
+$|M_i| = |A_i| +\frac{1}{2}|M_{i+1}|$, which in turn ensures that $|A_i| \leq 2n = O(n)$. \\
+
+After we perform the aforementioned pre-processing, querying $x$ in all $k$ lists is done as follows.
+First, we make a query for x in $M_1$ using a binary search in $O(\log n)$. Once we have found the position of $x$ in $M_1$, we use the \textit{cascaded pointers} to find the position of x in $M_2$. Generalising this step, once we found the position of x in $M_i$ where i $<$ k, we use the cascaded pointers to find the position of x in $M_{i+1}$. \\ \\
+To find the location in $M_{i+1}$, we find the \textit{two neighbouring elements} in $M_{i+1}$ that came from $M_i$ using the pointers we had assigned during the pre-processing phase. Now, these elements will have \textit{exactly one element} between them in $M_{i+1}$. \textbf{Therefore, to find the exact location in $M_{i+1}$, we just have to do a simple comparison with only the intermediate element}. This is the significance of taking $\alpha$ = $\frac{1}{2}$ as we just have to perform only one comparison, which takes $O(1)$ time, and hence we can retrieve the location of $x$ in $A_i$ from its location in $M_i$ again in $O(1)$ time. \\ \\
+
+Hence, the time to perform the preprocessing for fractional cascading is O(nk), the total search time per query is $O(k+\log n)$ and, the total time taken by the Fractional Cascading algorithm is $O(q(k+\logn))$ for $q$ queries, which is an astronomical improvement over the previous algorithms.
+
+
+
+% Define new lists $L'_1, . . . , L'_k$ by $L'_k$ = $L_k$, and for $i < k$, let $L'_i$ be the result of merging $L'_{i}$ with every other element of $L'_{i+1}$ Note that $|L'_i| = |L_i| +\frac{1}{2}|L'_{i+1}|$, so $|Li| \leq 2n = O(n).$. 
+% For each $i < k$, keep two pointers from each element. If the element came from $L_i$, keep a pointer to the two neighboring elements from $L'_{i+1}$, and vice versa. These pointers allow us to take information of our placement in $L'_i$ and in O(1) turn it into information about our placement in $L_i$ and our placement in half of $L'_{i+1}$.
+%Now to make a query for x in all k lists is quite straightforward. 
+%First, query $L'_1$ for the location of x with a binary search. Now to find the location of x in $L'_{i+1}$ from the location of x in $L'_i$, find the two neighboring elements in $L'{i+1}$ that came from $L'_i$ using the extra pointers. Then these elements have exactly one element between them in $L'_{i+1}$. To find our actual location in $L'_{i+1}$, we simply do a comparison with that intermediate element. This allows us to turn the information about
+%x’s location in $L'_i$ into information about x’s location in $L'_{i+1}$ in O(1) time, and we can retrieve x’s location in $L_i$ from its location in $L'_i$ in O(1), and thus we can query for x in all k lists in O(k + log n) time.
+
+
+%------------------------------------------------------------------------------%
+
 
 \section{Applications}
 This technique has various applications in numerous fields. \\
@@ -271,6 +306,8 @@ This technique has various applications in numerous fields. \\
         \end{itemize}
 \end{enumerate}
 
+
+%------------------------------------------------------------------------------%
 
 \pagebreak 
 \begin{thebibliography}{}
