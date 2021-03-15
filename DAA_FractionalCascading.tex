@@ -25,7 +25,7 @@
 \setlength{\parindent}{4em}
 \setlength{\parskip}{0em}
 \renewcommand{\baselinestretch}{1.5}
-
+\graphicspath{images/}
 \begin{document}
 
 \begin{titlepage}
@@ -261,8 +261,8 @@ Let the input be specified by $k$ $n$-element arrays, $A_1,A_2,\dots,A_k$, Let t
 Let $M_1,M_2,\dots,M_k$ be the new \textit{merged arrays} such that $M_k = A_k$ and $\forall i < k$, $M_i$ is defined as the result of merging $M_i$ with every $\frac{1}{\alpha}$th element of $M_{i+1}$. \\ \\
 As we're taking $\alpha$ = $\frac{1}{2}$, $M_i$ will be the result of merging $M_i$ with every alternate element of $M_{i+1}$. For every \textbf{cascaded element} of $M_i$ where i $<$ k, we keep two pointers from each element which are derived as follows:
 \begin{itemize}
-    \item If the element came from the same array, i.e, $A_i$, we keep a pointer to the two nearest neighbouring elements from $M_{i+1}$
-    \item if the element has been cascaded, we keep a pointer to the predecessor of the element in $M_i$
+    \item If the element came from the same array, i.e, $A_i$, we keep a pointer to the nearest neighbouring elements from $M_{i+1}$
+    \item if the element has been cascaded, we keep a pointer to the predecessor of the element in $M_i$ and also a bridge between $M_i$ and $M_{i+1}$ at the position where it is present in both of the arrays.
 \end{itemize}
 These pointers helps to find the position of the query element x in $A_i$ and also in the cascaded arrays below in $O(1)$ time. \\ \\
 \textbf{Note}: Since we are merging every alternate element of the below list to the current list, we have 
@@ -272,7 +272,7 @@ After we perform the aforementioned pre-processing, querying $x$ in all $k$ list
 First, we make a query for x in $M_1$ using a binary search in $O(\log n)$. Once we have found the position of $x$ in $M_1$, we use the \textit{cascaded pointers} to find the position of x in $M_2$. Generalising this step, once we found the position of x in $M_i$ where i $<$ k, we use the cascaded pointers to find the position of x in $M_{i+1}$. \\ \\
 To find the location in $M_{i+1}$, we find the \textit{two neighbouring elements} in $M_{i+1}$ that came from $M_i$ using the pointers we had assigned during the pre-processing phase. Now, these elements will have \textit{exactly one element} between them in $M_{i+1}$. \textbf{Therefore, to find the exact location in $M_{i+1}$, we just have to do a simple comparison with only the intermediate element}. This is the significance of taking $\alpha$ = $\frac{1}{2}$ as we just have to perform only one comparison, which takes $O(1)$ time, and hence we can retrieve the location of $x$ in $A_i$ from its location in $M_i$ again in $O(1)$ time. \\ \\
 
-Hence, the time to perform the preprocessing for fractional cascading is O(nk), the total search time per query is $O(k+log n)$ and, the total time taken by the Fractional Cascading algorithm is $O(q(k+\logn))$ for $q$ queries, which is an astronomical improvement over the previous algorithms.
+Hence, the time to perform the pre-processing for fractional cascading is O(nk), the total search time per query is $O(k+log n)$ and, the total time taken by the Fractional Cascading algorithm is $O(q(k+logn))$ for $q$ queries, which is an astronomical improvement over the previous algorithms.
 
 
 
@@ -298,9 +298,9 @@ Hence, the time to perform the preprocessing for fractional cascading is O(nk), 
         % // Insert all elements of the last array at position 0 of MergedArrays % \;
         MergedArrays = MergedArrays.insert(0,all elements of the last array) \;
         MergedArrays = MergedArrays.insert(0,merge the below array with the above array by only taking alternate elements of the below array) \;
-        Generate the boundry case predecessors and successors; $- \infty$ and $+ \infty$ \;
+        %Generate the boundry case predecessors and successors; $- \infty$ and $+ \infty$ \;
         For every element assign a two sized array to hold the pointers to the locations. \;
-        For every element in the merged arrays, assign locations based on the presence of that particular element in $A_i$ and $M_{i+1}$. Hence the pointer array's first element would be the location of the particular element in $A_i$ and the second element would be the location of the particular element in $M_{i+1}$. \; 
+        For every element in the merged arrays, assign locations based on the presence of that particular element in $A_i$ and $M_{i+1}$.If the element came from the same array, i.e, $A_i$, we keep a pointer to the nearest neighbouring elements from $M_{i+1}$. If the element has been cascaded, we keep a pointer to the predecessor of the element in $M_i$ and also a bridge between $M_i$ and $M_{i+1}$ at the position where it is present in both of the arrays.\;
         
         The gist of the algorithm is that we check for the position of the target element in the merged array, then we follow the pointers down to get the positions of the predecessors of the said target element in all of the k arrays. Let's call this array $positions_k$ \;
         The last step is to scan through $positions_k$, and see if the respective predecessor is actually the given target, or not. This generates the $[True,False]$ format given in the question and append it to the output array.
@@ -313,6 +313,37 @@ Hence, the time to perform the preprocessing for fractional cascading is O(nk), 
 \end{tcolorbox}
 
 
+
+\subsection{Example}
+\begin{enumerate}[label=(\alph*)]
+    \item List $L_1$: $[3,4,6]$
+    \item List $L_2$: $[2,6,7]$
+    \item List $L_3$: $[2,4,9]$
+\end{enumerate}
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[]{Images/Screenshot_2021-03-15 Fractional Cascading(1).png}
+    \caption{Fractional cascading pre processing for the given question}
+    \label{fig:label}
+\end{figure}
+    
+
+
+The figure gives the final MergedArrays and we can also see how the elements are cascaded. Every cascaded element has a pointer to it's predecessor which was initally present in the same array $A_i$ and also has a bridge between merged arrays $M_i$ and $M_{i+1}$ depending on the location of that particular element in both the arrays. The green and pink bridges demonstrate this fact. Also the elements that are present in both $A_i$ and $M_i$ has a pointer to the nearest cascaded element as shown by the purple pointers in the figure. 
+
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[]{Images/Screenshot_2021-03-15 Fractional Cascading(2).png}
+    \caption{Fractional cascading output(search) for the given question}
+    \label{fig:label}
+\end{figure}
+
+Here, the search query element, x = 4. So we start at $M_1$ and search for 4 using a binary search which will in turn return the first 4 in the array, i.e, the element present in index 1. Now we will follow this index's pointer to the nearest cascaded element which is 4 present at index 2. However, this is a cascaded element from the below arrays and hence will have a bridge to the below arrays. So the algorithm follows the bridge and goes to index 1 of $M_2$. However, this elements is also cascaded, so we check whether the previous element is equal to 4 or not. The previous element in this case is 2 present at index 0 of $M_2$ which is not equal to the query element. So we again go to the nearest cascaded element via 2's pointer and reach the next merged array which is $M_3$. Here the bridge's endpoint is the query element and it will return true and the algorithm is terminated as we have reached the lowest array. Hence the output will be [\textit{True},\textit{False},\textit{True}].
+
+\pagebreak
 %------------------------------------------------------------------------------%
 
 
