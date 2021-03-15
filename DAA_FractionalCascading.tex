@@ -192,7 +192,12 @@ In the best case, we follow a bridge from the answer to the query in $A_i$ to a 
 From a technical standpoint, we \textit{implement} this method as follows: \\
 For every element $e$ in the first array, give $e$ a pointer to the element with the \textit{same value} in the second array or if the value doesn't exist, the \textit{predecessor}. This is called bridge building between $A_i$ and $A_{i+1}$. Then, once we've found the item in the first array, we can just follow these pointers down in order to figure out where the item is in all the other arrays. To find the answer in $A_1$, we can just use a balanced binary search tree,thus making the overall time complexity of our algorithm $O(\log n + k)$ per query.
 
-
+\begin{figure}[H]
+    \centering
+    \includegraphics[]{Images/Screenshot_2021-03-15 You could have invented fractional cascading Inside 245-5D.png}
+    \caption{Process of bridge building for a given question}
+    \label{fig:label}
+\end{figure}
 
 
 
@@ -235,6 +240,14 @@ For every element $e$ in the first array, give $e$ a pointer to the element with
 
 This method seems like a very interesting and efficient alternative to solve this problem. However, there are some glaring weaknesses to this approach, the most important one being the fact that certain classes of inputs render this method useless. \\
 In particular, if a later list is completely \textit{in between} two elements of the first list, we have to redo the entire search, as the pointer pre-processing gives us no information that we didn't already know.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{Images/Screenshot_2021-03-15 fc dvi - notes08 pdf.png}
+    \caption{An example where a later list is completely \textit{in between} two elements of the first list illustrated via bridge building}
+    \label{fig:label}
+\end{figure}
+
 
 \textbf{Let's consider a simple example to elucidate this statement} \\
 Consider the case where $k = 2$. Everything would be better if only we could guarantee that the first list contained the right elements to give you useful information about the second array. We could just merge the arrays, but if we did this in the general case we'd end up with a totally merged array of size kn, which is not so good if k is large.
@@ -283,7 +296,7 @@ Hence, the time to perform the pre-processing for fractional cascading is O(nk),
 %x’s location in $L'_i$ into information about x’s location in $L'_{i+1}$ in O(1) time, and we can retrieve x’s location in $L_i$ from its location in $L'_i$ in O(1), and thus we can query for x in all k lists in O(k + log n) time.
 
 
-\section{PseudoCode}
+\subsection{PseudoCode}
 \begin{tcolorbox}[blanker,width=(\linewidth-3.5cm)]
 \begin{algorithm}[H]
     \SetAlgoLined
@@ -344,6 +357,40 @@ The figure gives the final MergedArrays and we can also see how the elements are
 Here, the search query element, x = 4. So we start at $M_1$ and search for 4 using a binary search which will in turn return the first 4 in the array, i.e, the element present in index 1. Now we will follow this index's pointer to the nearest cascaded element which is 4 present at index 2. However, this is a cascaded element from the below arrays and hence will have a bridge to the below arrays. So the algorithm follows the bridge and goes to index 1 of $M_2$. However, this elements is also cascaded, so we check whether the previous element is equal to 4 or not. The previous element in this case is 2 present at index 0 of $M_2$ which is not equal to the query element. So we again go to the nearest cascaded element via 2's pointer and reach the next merged array which is $M_3$. Here the bridge's endpoint is the query element and it will return true and the algorithm is terminated as we have reached the lowest array. Hence the output will be [\textit{True},\textit{False},\textit{True}].
 
 \pagebreak
+
+\subsection{Proof of Correctness}
+To prove that our Fractional Cascading algorithm is correct, we perform the following steps.
+\begin{itemize}
+    \item We look at an other simpler algorithm and prove its correctness, Let's call this algorithm X.
+    \item We show that our algorithm and X produce the same output. This forms the proof of correctness of our algorithm.
+\end{itemize}
+
+Note that we already have a candidate for algorithm X; Our improved brute force algorithm which uses binary search.
+
+%proof of correctness of binary search.
+
+We will follow the concept of universal generalization here; lets consider the $r^{th}$ array of our input sequence consisting of k arrays of size $n$. Lets also consider a target element $x$. Clearly there are two cases
+\begin{itemize}
+    \item x $\in$ array[r] lets call this situation 1.
+     \item x $\notin$ array[r] lets call this situation 2.
+\end{itemize}
+
+Lets start with situation 1, 
+
+
+Now there are two possibilities here when our control reaches array[r] 
+\begin{itemize}
+    \item we find element x and it is not cascaded from below then we can say that it return true which is exactly what algorithm X returns in the same situation .
+    \item we find element x but it is cascaded from below so, we look at its neighbours now, as x belongs to array[r], native x will be one of the neighbours of the previous element.Now this case transforms into the previous case and we can return true.
+\end{itemize}
+Now lets continue with situation 2.
+Now there are two possibilities here when our control reaches array[r] 
+
+\begin{itemize}
+    \item we find element x but it is cascaded from below.So we look at its nearest non cascaded neighbours which are guaranteed not to be x.So we can return false.
+    \item we find an element which is not equals to x. Now  regardless of whether its cascaded or not when we traverse to the pointers we are guaranteed not to find x so we return false.
+\end{itemize}
+
 %------------------------------------------------------------------------------%
 
 
@@ -387,7 +434,11 @@ C.S.252 ``Prof.RobertoTamassia'' ComputationalGeometry Sem.II, 1992-1993
 \bibitem{Fractional Cascading Demo}
 Fractional Cascading webpage created by Ravi Sinha alias ravix339-zz \\
 \texttt{https://ravix339.github.io/FractionalCascading/index.html} \\
-\texttt{https://ravix339.github.io/FractionalCascading/Demo.html} \\
+\texttt{https://ravix339.github.io/FractionalCascading/Demo.html}
+
+\bibitem{Blog by Edward Z. Yang}
+A blog about fractional cascading and bridge building by Edward Z. Yang
+\\\texttt{http://blog.ezyang.com/2012/03/you-could-have-invented-fractional-cascading/}
 
 
 \end{thebibliography}
