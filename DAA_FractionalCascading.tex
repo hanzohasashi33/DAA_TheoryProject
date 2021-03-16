@@ -10,7 +10,7 @@
 \usepackage[noline,boxed]{algorithm2e}
 \usepackage[skins]{tcolorbox}
 \usepackage[nottoc,notlot,notlof]{tocbibind}
-
+\usepackage{xcolor}
 
 \pagestyle{fancy}
 \fancyhead{}
@@ -36,7 +36,7 @@
 \vfill
 \line(1,0){400}\\[1mm]
 \huge{\textbf{Fractional Cascading}}\\[3mm]
-\Large{\textbf{An algorithmic approach}}\\[1mm]
+\Large{\textbf{An Algorithmic Approach}}\\[1mm]
 \line(1,0){400}\\
 \vfill
 By \\ 
@@ -52,12 +52,12 @@ IMT2019525 Vijay Jaisankar \\
 \setcounter{page}{1}
 
 \section{Abstract}
-        In this paper, we investigate the \textit{Fractional Cascading} technique in building range trees and for fast searching of an element in multiple arrays. In this venture, we introduce and examine \textit{Linear Search}, \textit{Binary Search}, \textit{Bridge Building} and \textit{Auxiliary lists}. We also look at some of the \textit{applications} of this technique, and suggest data structures for its efficient realisation. 
+        In this paper, we investigate the \textit{Fractional Cascading} technique which is used in building range trees and for fast searching of an element in multiple arrays. In this venture, we introduce and examine \textit{Linear Search}, \textit{Binary Search}, \textit{Bridge Building} and \textit{Fractional Cascading}. We also look at some of the \textit{applications} of this technique, and suggest data structures for its efficient realisation. 
 
 \section{Problem Statement}
-\textit{Fractional cascading: }You are given an input of k ordered lists of numbers, each of size n as well as a query value x. The problem's output is
-to return, for each list, True if the query value appears in the list and
-False if it does not. For example, if the input is:
+\textit{Fractional cascading: }You are given an input of $k$ ordered lists of numbers, each of size $n$ as well as a query value $x$. The problem's output is
+to return, for each list, \textit{True} if the query value appears in the list and
+\textit{False} if it does not. For example, if the input is:
 \begin{enumerate}[label=(\alph*)]
     \item List $L_1$: $[3,4,6]$
     \item List $L_2$: $[2,6,7]$
@@ -102,7 +102,7 @@ This algorithm forms the basis of the simplest solution to our problem: We just 
         output = [] \;
         \For{$i\leftarrow 0$ \KwTo $k$}
         {
-            output.append(linearSearch(input[i],x);
+            output.append(linearSearch(input[i],x));
         }
     }
 
@@ -134,6 +134,10 @@ In the worst case, Binary Search will take $O(\log n)$ comparisons, where n is t
 
 To improve the performance of the Brute Force subroutine, we replace the Linear Search subroutine with the aforementioned Binary Search subroutine. If we have $q$ queries, this takes $O(q \cdot k \cdot \log n)$ time, which is certainly a lot better than the initial brute force algorithm, but can yet be improved further.
 
+
+\subsection{Proof of correctness}
+
+\subsection{Pseudocode}
 \begin{tcolorbox}[blanker,width=(\linewidth-3.5cm)]
 \begin{algorithm}[H]
     \SetAlgoLined
@@ -171,7 +175,7 @@ To improve the performance of the Brute Force subroutine, we replace the Linear 
         output = [] \;
         \For{$i\leftarrow 0$ \KwTo $k$}
         {
-            output.append(BinarySearch(input[i],x);
+            output.append(BinarySearch(input[i],x));
         }
     }
 
@@ -186,11 +190,11 @@ To improve the performance of the Brute Force subroutine, we replace the Linear 
 \subsection{Introduction to bridges}
 A \textit{bridge} is a pointer from an element $a_i$ of $A_i$ to an element $a_j$ of $A_{i+1}$ where  $|a_i-a_j|$ is \textbf{small}, where $A$ is the list and $a$ represents an element of the array. By \textit{small}, we mean an element that is either of the same value, or with the smallest difference to the one considered as reference. \\ 
 
-Once we locate the answer to a query in one array, we should be able to \textbf{follow a bridge} to a key that is close to the answer in the next array. \\
-In the best case, we follow a bridge from the answer to the query in $A_i$ to a key in $A_{i+1}$ and then from there locate the answer in $A_{i+1}$, all in constant time. If we can do \textit{this},then once we have the answer in $A_1$ we can find the answer in the remaining $k-1$ sorted arrays in $O(k)$ time complexity. \\
+Once we locate the position to a query in a array, we should be able to \textbf{follow a bridge} to a element that is close to the answer in the next array. \\
+In the best case, we follow a bridge from the answer to the query in $A_i$ to the endpoint of the bridge in $A_{i+1}$ and then from there locate the answer in $A_{i+1}$, all in constant time. If we can do \textit{this},then once we have the answer in $A_1$ we can find the answer in the remaining $k-1$ sorted arrays in $O(k)$ time complexity. \\
 
 From a technical standpoint, we \textit{implement} this method as follows: \\
-For every element $e$ in the first array, give $e$ a pointer to the element with the \textit{same value} in the second array or if the value doesn't exist, the \textit{predecessor}. This is called bridge building between $A_i$ and $A_{i+1}$. Then, once we've found the item in the first array, we can just follow these pointers down in order to figure out where the item is in all the other arrays. To find the answer in $A_1$, we can just use a balanced binary search tree,thus making the overall time complexity of our algorithm $O(\log n + k)$ per query.
+For every element $e$ in the first array, give $e$ a pointer to the element with the \textit{same value} in the second array or if the value doesn't exist, the \textit{predecessor} (\textit{Note}: predecessor(x) = $v \in $ Search space where $x-v$ is minimum, and $x>v$.). This is called \textit{bridge building} between $A_i$ and $A_{i+1}$. Then, once we've found the item in the first array, we can just follow these pointers down in order to figure out where the item might be located in all the other arrays. To find the answer in $A_1$, we can just use a balanced binary search tree,thus making the overall time complexity of our algorithm $O(\log n + k)$ per query.
 
 \begin{figure}[H]
     \centering
@@ -199,7 +203,8 @@ For every element $e$ in the first array, give $e$ a pointer to the element with
     \label{fig:label}
 \end{figure}
 
-
+From the image, we can see the bridge building in action, where the lines between the arrays represent bridges. We can clearly see the predecessor linkages and how we can follow the pointers down and generate the output for all of the arrays. \\ \\ 
+In this example, we are searching for 8 in all 3 arrays. We can clearly see the path of pointers we should traverse, as outlined in red.Note that, in the last array, the most plausible candidate element is 7 and not 8, so we would return \textit{False} for this array, and hence our overall output will be [\textit{True},\textit{True},\textit{False}] as the element 8 is only present in the first two arrays and not in the third one.
 
 
 
@@ -250,9 +255,9 @@ In particular, if a later list is completely \textit{in between} two elements of
 
 
 \textbf{Let's consider a simple example to elucidate this statement} \\
-Consider the case where $k = 2$. Everything would be better if only we could guarantee that the first list contained the right elements to give you useful information about the second array. We could just merge the arrays, but if we did this in the general case we'd end up with a totally merged array of size kn, which is not so good if k is large.
+Consider the case where $k = 2$. Everything would be better if only we could guarantee that the first list contained the \textit{right elements} to give you useful information about the second array. The bridges would be built with only the maximum and minimum of the lower array as endpoints leading us to either search the lower array again or we could just merge the arrays, but if we did this in the general case we'd end up with a totally merged array of size kn, which is not so good if k is large.
 
-Even if each time we find an answer in the sorted Array $A_i$, we follow the bridge pointer from it as well as from the key above it we are still left with the entire contents of catalog $A_{i+1}$ to search. This continues through the entire set of k catalogs.If we search each catalog by doing a linear scan from the point at which the bridge told us to begin,the total search time will be O(nk).Even if we build a balanced search tree over all elements in $A{i+1}$ that appear between two consecutive bridge pointers from $A_i$ the query time will still be O(klogn) which is similar to performing k binary searches to get the query element.
+Even if each time we find an answer in the sorted Array $A_i$, we follow the bridge pointer from it as well as from the key above it we are still left with the entire contents of array $A_{i+1}$ to search. This continues through the entire set of k arrays. If we search each array by doing a linear scan from the point at which the bridge told us to begin,the total search time will be O(nk).Even if we build a balanced search tree over all elements in $A_{i+1}$ that appear between two consecutive bridge pointers from $A_i$ the query time will still be O(klogn) which is similar to performing k binary searches to get the query element.
 
 
 
@@ -260,32 +265,34 @@ Even if each time we find an answer in the sorted Array $A_i$, we follow the bri
 \section{Fractional Cascading}
 
 \subsection{Intuition behind Fractional Cascading}
-Because of the shortcomings of the \textit{Bridge Building} algorithm, i.e the case where every element of the "below array is in between all the elements of the "above" array.(\textbf{Note}: We say that array 1 is “above” array 2 and array 2 is “below” array 1. Therefore, an Array $j$ is below Array $i$ if $j > i$. In this case, we either have to do $k$ binary searches, or we have to merge all $n$ elements of the below array recursively and maintain bridges, to get the output. This will warrant a sub-optimal, extra time complexity of $O(k \cdot n)$, as we are going through \textit{each} array element iteratively to merge it.
+Because of the shortcomings of the \textit{Bridge Building} algorithm, i.e the case where every element of the ``below'' array is in between all the elements of the ``above'' array.(\textbf{Note}: We say that array 1 is “above” array 2 and array 2 is “below” array 1. Therefore, an Array $j$ is below Array $i$ if $j > i$). In this case, we either have to do $k$ binary searches, or we have to merge all $n$ elements of the below arrays recursively and maintain bridges, to get the output. This will warrant a sub-optimal, extra time complexity of $O(k \cdot n)$, as we are going through \textit{each} array element iteratively to merge it.
 
-To avoid this problem of merging all elements and getting $O(k \cdot n)$ time complexity, we start with the \textit{lowest} list in the sequence and select every $i$th element, where i = $\frac{1}{\alpha}$ and insert it into the array above it while still maintaining sorted order. \\
-We then mark that element as \textit{promoted} and keep a pointer from it, to its original position in the bottom list. This operation of taking every $i$th element and \textit{promoting} it to the array above it is called \textit{cascading}, and since we are only promoting a fraction of the elements, the algorithm is called \textbf{fractional cascading}.
+To avoid this problem of merging all elements and getting $O(k \cdot n)$ time complexity, we start with the \textit{lowest} list in the sequence and select every $i$th element, where i = $\frac{1}{\alpha}$ and insert it into the array above it while still maintaining sorted order. We then mark that element as \textit{promoted} and keep a pointer from it, to its original position in the bottom list. This operation of taking every $i$th element and \textit{promoting} it to the array above it is called \textit{cascading}, and since we are only promoting a fraction of the elements, the algorithm is called \textbf{fractional cascading}.
 
-For selecting, $\alpha$, we can choose a variety of fractions, however $\alpha$ = $\frac{1}{2}$ seems most appropriate because, we will have to compare only 2 elements while searching, after prepocessing. This will also ensure that our time complexity stays low, and easily computable.
+For selecting, $\alpha$, we can choose between a variety of fractions, however $\alpha$ = $\frac{1}{2}$ seems most appropriate because, we will have to compare only 2 elements while searching, after prepocessing. This will also ensure that our time complexity stays low, and easily computable.
 
 
 \subsection{Algorithmic Approach to Fractional Cascading}
 
 Let the input be specified by $k$ $n$-element arrays, $A_1,A_2,\dots,A_k$, Let the query element value be $x$.
 Let $M_1,M_2,\dots,M_k$ be the new \textit{merged arrays} such that $M_k = A_k$ and $\forall i < k$, $M_i$ is defined as the result of merging $M_i$ with every $\frac{1}{\alpha}$th element of $M_{i+1}$. \\ \\
-As we're taking $\alpha$ = $\frac{1}{2}$, $M_i$ will be the result of merging $M_i$ with every alternate element of $M_{i+1}$. For every \textbf{cascaded element} of $M_i$ where i $<$ k, we keep two pointers from each element which are derived as follows:
+As we're taking $\alpha$ = $\frac{1}{2}$, $M_i$ will be the result of merging $M_i$ with every alternate element of $M_{i+1}$. For every \textbf{cascaded element} of $M_i$ $\forall$ i $<$ k, we keep two pointers from each element which are derived as follows:
 \begin{itemize}
-    \item If the element came from the same array, i.e, $A_i$, we keep a pointer to the nearest neighbouring elements from $M_{i+1}$
-    \item if the element has been cascaded, we keep a pointer to the predecessor of the element in $M_i$ and also a bridge between $M_i$ and $M_{i+1}$ at the position where it is present in both of the arrays.
+    %\item If the element came from the same array, i.e, $A_i$, we keep a pointer to the nearest neighbouring elements which are cascaded from $M_{i+1}$
+    \item If the element is non cascaded,i.e, If the element is from the Array $A_i$, then the first pointer points to the smallest cascaded element greater than the element in $A_i$ and the second pointer points to the largest element lesser than the element in $A_i$. 
+ 
+    \item if the element has been cascaded, we keep a pointer to the predecessor of the element in $M_i$ and also a keep a bridge between $M_i$ and $M_{i+1}$ at the position where it is present in both of the arrays.
 \end{itemize}
+Additionally, we add bridges between the pseudo-elements ,i.e,  -$\infty$ and $\infty$ in consecutive arrays.If there is no key of the appropriate type above or below the key,the pointer points to the pseudo-keys at $\pm \infty$, whichever is appropriate.
 These pointers helps to find the position of the query element x in $A_i$ and also in the cascaded arrays below in $O(1)$ time. \\ \\
 \textbf{Note}: Since we are merging every alternate element of the below list to the current list, we have 
 $|M_i| = |A_i| +\frac{1}{2}|M_{i+1}|$, which in turn ensures that $|A_i| \leq 2n = O(n)$. \\
 
-After we perform the aforementioned pre-processing, querying $x$ in all $k$ lists is done as follows.
+After we perform the aforementioned pre-processing, querying $x$ in all $k$ lists is done as follows:
 First, we make a query for x in $M_1$ using a binary search in $O(\log n)$. Once we have found the position of $x$ in $M_1$, we use the \textit{cascaded pointers} to find the position of x in $M_2$. Generalising this step, once we found the position of x in $M_i$ where i $<$ k, we use the cascaded pointers to find the position of x in $M_{i+1}$. \\ \\
-To find the location in $M_{i+1}$, we find the \textit{two neighbouring elements} in $M_{i+1}$ that came from $M_i$ using the pointers we had assigned during the pre-processing phase. Now, these elements will have \textit{exactly one element} between them in $M_{i+1}$. \textbf{Therefore, to find the exact location in $M_{i+1}$, we just have to do a simple comparison with only the intermediate element}. This is the significance of taking $\alpha$ = $\frac{1}{2}$ as we just have to perform only one comparison, which takes $O(1)$ time, and hence we can retrieve the location of $x$ in $A_i$ from its location in $M_i$ again in $O(1)$ time. \\ \\
+To find the location in $M_{i+1}$, we find the \textit{two neighbouring elements} in $M_{i}$ that came from $M_{i+1}$ using the pointers we had assigned during the pre-processing phase. Now, these elements will have \textit{exactly one element} between them in $M_{i+1}$. \textbf{Therefore, to find the exact location in $M_{i+1}$, we just have to do a simple comparison with only the intermediate element}. This is the significance of taking $\alpha$ = $\frac{1}{2}$ as we just have to perform only one comparison, which takes $O(1)$ time, and hence we can retrieve the location of $x$ in $A_i$ from its location in $M_i$ again in $O(1)$ time. \\ \\
 
-Hence, the time to perform the pre-processing for fractional cascading is O(nk), the total search time per query is $O(k+log n)$ and, the total time taken by the Fractional Cascading algorithm is $O(q(k+logn))$ for $q$ queries, which is an astronomical improvement over the previous algorithms.
+Hence, the time to perform the pre-processing for fractional cascading is O(nk), the total search time per query is $O(k+log n)$ and, the total time taken by the Fractional Cascading algorithm is $O(q(k+logn))$ for $q$ queries, which is an improvement over the previous algorithms.
 
 
 
@@ -311,12 +318,11 @@ Hence, the time to perform the pre-processing for fractional cascading is O(nk),
         % // Insert all elements of the last array at position 0 of MergedArrays % \;
         MergedArrays = MergedArrays.insert(0,all elements of the last array) \;
         MergedArrays = MergedArrays.insert(0,merge the below array with the above array by only taking alternate elements of the below array) \;
-        %Generate the boundry case predecessors and successors; $- \infty$ and $+ \infty$ \;
-        For every element assign a two sized array to hold the pointers to the locations. \;
-        For every element in the merged arrays, assign locations based on the presence of that particular element in $A_i$ and $M_{i+1}$.If the element came from the same array, i.e, $A_i$, we keep a pointer to the nearest neighbouring elements from $M_{i+1}$. If the element has been cascaded, we keep a pointer to the predecessor of the element in $M_i$ and also a bridge between $M_i$ and $M_{i+1}$ at the position where it is present in both of the arrays.\;
-        
-        The gist of the algorithm is that we check for the position of the target element in the merged array, then we follow the pointers down to get the positions of the predecessors of the said target element in all of the k arrays. Let's call this array $positions_k$ \;
-        The last step is to scan through $positions_k$, and see if the respective predecessor is actually the given target, or not. This generates the $[True,False]$ format given in the question and append it to the output array.
+        Generate the boundry case predecessors and successors; $- \infty$ and $+ \infty$ \;
+        %For every element assign a two sized array to hold the pointers to the locations. \;
+        For every element in the merged arrays, assign locations based on the presence of that particular element in $A_i$ and $M_{i+1}$.If the element came from the same array, i.e, $A_i$, we keep a pointer to the nearest neighbouring element on either side from $M_{i+1}$. If the element has been cascaded, we keep a pointer to the predecessor of the element in $M_i$ and also a bridge between $M_i$ and $M_{i+1}$ at the position where it is present in both of the arrays.\;
+        We then check for the position of the target element in the merged array, then we follow the pointers down to get the positions of the predecessors of the said target element in all of the k arrays. Let's call this array $positions[k]$ \;
+        The last step is to scan through $positions[k]$, and see if the respective predecessor is actually the given target, or not. This generates the $[True,False]$ format given in the question and append it to the output array.
     }
     
     
@@ -343,7 +349,7 @@ Hence, the time to perform the pre-processing for fractional cascading is O(nk),
     
 
 
-The figure gives the final MergedArrays and we can also see how the elements are cascaded. Every cascaded element has a pointer to it's predecessor which was initally present in the same array $A_i$ and also has a bridge between merged arrays $M_i$ and $M_{i+1}$ depending on the location of that particular element in both the arrays. The green and pink bridges demonstrate this fact. Also the elements that are present in both $A_i$ and $M_i$ has a pointer to the nearest cascaded element as shown by the purple pointers in the figure. 
+The figure gives the final MergedArrays and we can also see how the elements are cascaded.(\textbf{NOTE:} The pseudo-elements and some of the pointers are not shown in the figure). Every cascaded element has a pointer to it's predecessor which was initally present in the same array $A_i$ and also has a bridge between merged arrays $M_i$ and $M_{i+1}$ depending on the location of that particular element in both the arrays. The green and pink bridges demonstrate this fact. Also the elements that are present in both $A_i$ and $M_i$ has a pointer to the nearest cascaded element as shown by the purple pointers in the figure.(\textbf{NOTE:} The implementation provided in \cite{Fractional Cascading Demo} is a bit different as it only has one pointer to the nearest cascaded element, whereas our implementation has 2 pointers.) 
 
 
 
