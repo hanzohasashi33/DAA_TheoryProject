@@ -11,6 +11,9 @@
 \usepackage[skins]{tcolorbox}
 \usepackage[nottoc,notlot,notlof]{tocbibind}
 \usepackage{xcolor}
+\usepackage{mathtools}
+\newcommand{\defeq}{\vcentcolon=}
+\newcommand{\eqdef}{=\vcentcolon}
 
 \pagestyle{fancy}
 \fancyhead{}
@@ -136,6 +139,32 @@ To improve the performance of the Brute Force subroutine, we replace the Linear 
 
 
 \subsection{Proof of correctness}
+We prove the correctness of binary search by the \textit{method of strong induction} 
+
+Let $p(k) \defeq $ Binary search works on an array of size $k$ 
+\begin{enumerate}
+    \item \textbf{Base Case}
+    \begin{itemize}
+        \item If $k=1$, $p(1)$ is trivially true; as either $array[mid] = x$, or not
+        \item Hence, $p(1)$ is true
+    \end{itemize}
+    \item \textbf{Induction Hypothesis}
+    \begin{itemize}
+        \item Let $p(1) \land p(2) \land \dots \land p(z) = $ True
+        \item This means that binary search works for all arrays of size \textit{at most} $z$.
+    \end{itemize}
+    \item \textbf{Induction Step}
+    \begin{itemize}
+        \item Now, we look at an array of size $z+1$. Here, we have three cases as outlined in the algorithm:
+        \begin{itemize}
+            \item If $array[mid] = x$, we are done as we can return prematurely from the loop
+            \item Else, our new search space will become roughly half(\textit{Note: It will be exactly $\frac{1}{2}$ of the original size, if the size of the array is a power of 2}). In any case, the size of the ``new'' array we should search in, is $\leq z$.
+            \item Now, from our \textit{Strong Induction Hypothesis}, we are done as all of their previous cases are true.
+            \item So, $p(1) \land p(2) \land \dots \land p(z) \rightarrow p(z+1)$
+        \end{itemize}
+    \end{itemize}
+    \item \textbf{So, we have proved the correctness of the binary search algorithm by strong induction.}
+\end{enumerate}
 
 \subsection{Pseudocode}
 \begin{tcolorbox}[blanker,width=(\linewidth-3.5cm)]
@@ -188,7 +217,7 @@ To improve the performance of the Brute Force subroutine, we replace the Linear 
 
 \section{Bridge Building}
 \subsection{Introduction to bridges}
-A \textit{bridge} is a pointer from an element $a_i$ of $A_i$ to an element $a_j$ of $A_{i+1}$ where  $|a_i-a_j|$ is \textbf{small}, where $A$ is the list and $a$ represents an element of the array. By \textit{small}, we mean an element that is either of the same value, or with the smallest difference to the one considered as reference. \\ 
+A \textit{bridge} is a pointer from an element $a_i$ of $A_i$ to an element $a_j$ of $A_{i+1}$ where  $|a_i-a_j|$ is \textbf{small}, where $A$ is the list and $a$ represents an element of the array. By \textit{small}, we mean an element that is either of the same value, or with the smallest difference to the one considered as reference.$^{\cite{Fractional cascading notes by Prof Prof.Roberto Tamassia}}$ \\ 
 
 Once we locate the position to a query in a array, we should be able to \textbf{follow a bridge} to a element that is close to the answer in the next array. \\
 In the best case, we follow a bridge from the answer to the query in $A_i$ to the endpoint of the bridge in $A_{i+1}$ and then from there locate the answer in $A_{i+1}$, all in constant time. If we can do \textit{this},then once we have the answer in $A_1$ we can find the answer in the remaining $k-1$ sorted arrays in $O(k)$ time complexity. \\
@@ -199,7 +228,7 @@ For every element $e$ in the first array, give $e$ a pointer to the element with
 \begin{figure}[H]
     \centering
     \includegraphics[]{Images/Screenshot_2021-03-15 You could have invented fractional cascading Inside 245-5D.png}
-    \caption{Process of bridge building for a given question}
+    \caption{Process of bridge building for a given question.$^{\cite{Blog by Edward Z. Yang}}$}
     \label{fig:label}
 \end{figure}
 
@@ -249,15 +278,15 @@ In particular, if a later list is completely \textit{in between} two elements of
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{Images/Screenshot_2021-03-15 fc dvi - notes08 pdf.png}
-    \caption{An example where a later list is completely \textit{in between} two elements of the first list illustrated via bridge building}
+    \caption{An example where a later list is completely \textit{in between} two elements of the first list illustrated via bridge building.$^{\cite{Fractional cascading notes by Prof Prof.Roberto Tamassia}}$}
     \label{fig:label}
 \end{figure}
 
 
 \textbf{Let's consider a simple example to elucidate this statement} \\
-Consider the case where $k = 2$. Everything would be better if only we could guarantee that the first list contained the \textit{right elements} to give you useful information about the second array. The bridges would be built with only the maximum and minimum of the lower array as endpoints leading us to either search the lower array again or we could just merge the arrays, but if we did this in the general case we'd end up with a totally merged array of size kn, which is not so good if k is large.
+Consider the case where $k = 2$. Everything would be better if only we could guarantee that the first list contained the \textit{right elements} to give you useful information about the second array. The bridges would be built with only the maximum and minimum of the lower array as endpoints leading us to either search the lower array again or we could just \textit{merge the arrays} naively, but if we did this, we'd end up with an array of size $k \cdot n$, which is not optimal at all, if $k$ is even moderately large.
 
-Even if each time we find an answer in the sorted Array $A_i$, we follow the bridge pointer from it as well as from the key above it we are still left with the entire contents of array $A_{i+1}$ to search. This continues through the entire set of k arrays. If we search each array by doing a linear scan from the point at which the bridge told us to begin,the total search time will be O(nk).Even if we build a balanced search tree over all elements in $A_{i+1}$ that appear between two consecutive bridge pointers from $A_i$ the query time will still be O(klogn) which is similar to performing k binary searches to get the query element.
+Even if each time we find an answer in the sorted Array $A_i$, we follow the bridge pointer from it as well as from the key above it we are still left with the entire contents of array $A_{i+1}$ to search. This continues through the entire set of $k$ arrays. If we search each array by doing a linear scan from the point at which the bridge told us to begin,the total search time will be $O(n \cdot k)$ .Even if we build a balanced search tree over all elements in $A_{i+1}$ that appear between two consecutive bridge pointers from $A_i$ the query time will still be $O(k \cdot \log n)$ which is similar to performing $k$ binary searches to get the query element.
 
 
 
@@ -267,7 +296,7 @@ Even if each time we find an answer in the sorted Array $A_i$, we follow the bri
 \subsection{Intuition behind Fractional Cascading}
 Because of the shortcomings of the \textit{Bridge Building} algorithm, i.e the case where every element of the ``below'' array is in between all the elements of the ``above'' array.(\textbf{Note}: We say that array 1 is “above” array 2 and array 2 is “below” array 1. Therefore, an Array $j$ is below Array $i$ if $j > i$). In this case, we either have to do $k$ binary searches, or we have to merge all $n$ elements of the below arrays recursively and maintain bridges, to get the output. This will warrant a sub-optimal, extra time complexity of $O(k \cdot n)$, as we are going through \textit{each} array element iteratively to merge it.
 
-To avoid this problem of merging all elements and getting $O(k \cdot n)$ time complexity, we start with the \textit{lowest} list in the sequence and select every $i$th element, where i = $\frac{1}{\alpha}$ and insert it into the array above it while still maintaining sorted order. We then mark that element as \textit{promoted} and keep a pointer from it, to its original position in the bottom list. This operation of taking every $i$th element and \textit{promoting} it to the array above it is called \textit{cascading}, and since we are only promoting a fraction of the elements, the algorithm is called \textbf{fractional cascading}.
+To avoid this problem of merging all elements and getting $O(k \cdot n)$ time complexity, we start with the \textit{lowest} list in the sequence and select every $i$th element, where i = $\frac{1}{\alpha}$ and insert it into the array above it while still maintaining sorted order. We then mark that element as \textit{promoted}$^{\cite{Fractional Cascading Demo}}$ and keep a pointer from it, to its original position in the bottom list. This operation of taking every $i$th element and \textit{promoting} it to the array above it is called \textit{cascading}, and since we are only promoting a fraction of the elements, the algorithm is called \textbf{fractional cascading}.
 
 For selecting, $\alpha$, we can choose between a variety of fractions, however $\alpha$ = $\frac{1}{2}$ seems most appropriate because, we will have to compare only 2 elements while searching, after prepocessing. This will also ensure that our time complexity stays low, and easily computable.
 
@@ -283,10 +312,10 @@ As we're taking $\alpha$ = $\frac{1}{2}$, $M_i$ will be the result of merging $M
  
     \item if the element has been cascaded, we keep a pointer to the predecessor of the element in $M_i$ and also a keep a bridge between $M_i$ and $M_{i+1}$ at the position where it is present in both of the arrays.
 \end{itemize}
-Additionally, we add bridges between the pseudo-elements ,i.e,  -$\infty$ and $\infty$ in consecutive arrays.If there is no key of the appropriate type above or below the key,the pointer points to the pseudo-keys at $\pm \infty$, whichever is appropriate.
+Additionally, we add bridges between the pseudo-elements ,i.e,  -$\infty$ and $\infty$ in consecutive arrays.If there is no key of the appropriate type above or below the key,the pointer points to the pseudo-keys at $\pm \infty$, whichever is appropriate.$^{\cite{Fractional cascading notes by Prof Prof.Roberto Tamassia}}$
 These pointers helps to find the position of the query element x in $A_i$ and also in the cascaded arrays below in $O(1)$ time. \\ \\
 \textbf{Note}: Since we are merging every alternate element of the below list to the current list, we have 
-$|M_i| = |A_i| +\frac{1}{2}|M_{i+1}|$, which in turn ensures that $|A_i| \leq 2n = O(n)$. \\
+$|M_i| = |A_i| +\frac{1}{2}|M_{i+1}|$, which in turn ensures that $|A_i| \leq 2n = O(n) ^{\cite{MIT OCW Notes on Fractional Cascading}}$. \\
 
 After we perform the aforementioned pre-processing, querying $x$ in all $k$ lists is done as follows:
 First, we make a query for x in $M_1$ using a binary search in $O(\log n)$. Once we have found the position of $x$ in $M_1$, we use the \textit{cascaded pointers} to find the position of x in $M_2$. Generalising this step, once we found the position of x in $M_i$ where i $<$ k, we use the cascaded pointers to find the position of x in $M_{i+1}$. \\ \\
@@ -343,7 +372,7 @@ Hence, the time to perform the pre-processing for fractional cascading is O(nk),
 \begin{figure}[!h]
     \centering
     \includegraphics[]{Images/Screenshot_2021-03-15 Fractional Cascading(1).png}
-    \caption{Fractional cascading pre processing for the given question}
+    \caption{Fractional cascading pre processing for the given question.$^{\cite{Fractional Cascading Demo}}$}
     \label{fig:label}
 \end{figure}
     
@@ -356,7 +385,7 @@ The figure gives the final MergedArrays and we can also see how the elements are
 \begin{figure}[H]
     \centering
     \includegraphics[]{Images/Screenshot_2021-03-15 Fractional Cascading(2).png}
-    \caption{Fractional cascading output(search) for the given question}
+    \caption{Fractional cascading output(search) for the given question.$^{\cite{Fractional Cascading Demo}}$}
     \label{fig:label}
 \end{figure}
 
@@ -367,41 +396,43 @@ Here, the search query element, x = 4. So we start at $M_1$ and search for 4 usi
 \subsection{Proof of Correctness}
 To prove that our Fractional Cascading algorithm is correct, we perform the following steps.
 \begin{itemize}
-    \item We look at an other simpler algorithm and prove its correctness, Let's call this algorithm X.
+    \item We look at another simpler algorithm and prove its correctness, let's call this algorithm X.
     \item We show that our algorithm and X produce the same output. This forms the proof of correctness of our algorithm.
 \end{itemize}
 
-Note that we already have a candidate for algorithm X; Our improved brute force algorithm which uses binary search.
+Note that we already have a candidate for algorithm X; Our \textit{improved brute force algorithm} which uses binary search.
 
 %proof of correctness of binary search.
 
-We will follow the concept of universal generalization here; lets consider the $r^{th}$ array of our input sequence consisting of k arrays of size $n$. Lets also consider a target element $x$. Clearly there are two cases
+We will follow the concept of universal generalization here; lets consider the $r^{th}$ array of our input sequence consisting of k arrays of size $n$ where r $<$ k. Let's also consider a target element $x$. Clearly there are two cases
 \begin{itemize}
-    \item x $\in$ array[r] lets call this situation 1.
-     \item x $\notin$ array[r] lets call this situation 2.
+    \item x $\in$ array[r] : let's call this situation 1.
+     \item x $\notin$ array[r] : let's call this situation 2.
 \end{itemize}
 
-Lets start with situation 1, 
-
+\textbf{Let's start with situation 1}, 
 
 Now there are two possibilities here when our control reaches array[r] 
 \begin{itemize}
-    \item we find element x and it is not cascaded from below then we can say that it return true which is exactly what algorithm X returns in the same situation .
-    \item we find element x but it is cascaded from below so, we look at its neighbours now, as x belongs to array[r], native x will be one of the neighbours of the previous element.Now this case transforms into the previous case and we can return true.
-\end{itemize}
-Now lets continue with situation 2.
-Now there are two possibilities here when our control reaches array[r] 
+    \item We find element $x$ and it is not cascaded from below then we can say that it returns \textit{true} which is exactly what algorithm X returns in the same situation.
+    \item We find element $x$ but it is cascaded from below,then, our control moves into the nearest neighbours of the non-cascaded $x$. As x $\in$ array[r], \textit{native x} will be one of the neighbours of the non-cascaded $x$. So, the control gets transferred to the native $x$, and this case gets \textit{transformed} into the previous case. Hence, we return \textit{true} which is exactly what algorithm X returns in the same situation.
+\end{itemize} \\ \\ \\
+Now, \textbf{let's continue with situation 2}.
+Now, there are two possibilities here when our control reaches array[r] 
 
 \begin{itemize}
-    \item we find element x but it is cascaded from below.So we look at its nearest non cascaded neighbours which are guaranteed not to be x.So we can return false.
-    \item we find an element which is not equals to x. Now  regardless of whether its cascaded or not when we traverse to the pointers we are guaranteed not to find x so we return false.
+    \item We find element \textit{x} but it is cascaded from below. So we look at its nearest non-cascaded neighbours which are guaranteed not to be $x$(as $x$ $\notin$ array[r] by supposition). So we can return \textit{false}, which is exactly what algorithm X returns in this situation.
+    \item We find an element which is not equals to $x$. Now, regardless of whether it's cascaded or not when we traverse to the pointers, we are guaranteed not to find $x$ so we return $false$, which is exactly what algorithm X returns in this situation.
 \end{itemize}
+
+
+Hence, the output given by the fractional cascading algorithm and the one given by the binary search algorithm is equal. All the cases are exhausted and the algorithm terminates when $M_k$ = $A_k$. This proves that our \textbf{algorithm gives correct output}, and hence concludes the proof of correctness.
 
 %------------------------------------------------------------------------------%
 
 
 \section{Applications}
-This technique has various applications in numerous fields. \\
+This technique has various applications$^\cite{Wikipedia article on fractional cascading}$ in numerous fields. \\
 \begin{enumerate}
     \item Computational Geometry
     \begin{itemize}
@@ -412,7 +443,7 @@ This technique has various applications in numerous fields. \\
     \item Networks
     \begin{itemize}
         \item Fast Packet filtering in internet routers.
-        \item data distribution and retrieval in sensor networks
+        \item Data distribution and retrieval in sensor networks
     \end{itemize}
     \item Linear Range Queries
         \begin{itemize}
@@ -426,27 +457,29 @@ This technique has various applications in numerous fields. \\
 \pagebreak 
 \begin{thebibliography}{}
 
-\bibitem{Fractional cascading notes by Prof Prof.RobertoTamassia}
+\bibitem{Fractional cascading notes by Prof Prof.Roberto Tamassia}
 C.S.252 ``Prof.RobertoTamassia'' ComputationalGeometry Sem.II, 1992-1993
 \\
-\texttt{http://cs.brown.edu/courses/cs252/misc/resources/lectures/pdf/notes08.pdf}
+\texttt{http://cs.brown.edu/courses/cs252/misc/resources/lectures/pdf/notes08.pdf} \\
 
 
 \bibitem{MIT OCW Notes on Fractional Cascading}
 6.851:Advanced Data Structures Spring 2012 ``Prof.Erik Demaine'' \\
-\href{https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-851-advanced-data-structures-spring-2012/calendar-and-notes/MIT6_851S12_L3.pdf}{Link to MIT Lecture notes by Prof Erik Demaine on the topic Advanced Data Structures}
+\href{https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-851-advanced-data-structures-spring-2012/calendar-and-notes/MIT6_851S12_L3.pdf}{Link to MIT Lecture notes by Prof Erik Demaine on the topic Advanced Data Structures} \\
 
 
 \bibitem{Fractional Cascading Demo}
 Fractional Cascading webpage created by Ravi Sinha alias ravix339-zz \\
 \texttt{https://ravix339.github.io/FractionalCascading/index.html} \\
-\texttt{https://ravix339.github.io/FractionalCascading/Demo.html}
+\texttt{https://ravix339.github.io/FractionalCascading/Demo.html} \\
 
 \bibitem{Blog by Edward Z. Yang}
-A blog about fractional cascading and bridge building by Edward Z. Yang
-\\\texttt{http://blog.ezyang.com/2012/03/you-could-have-invented-fractional-cascading/}
+A blog about fractional cascading and bridge building by Edward Z. Yang \\
+\texttt{http://blog.ezyang.com/2012/03/you-could-have-invented-fractional-cascading/} \\
 
-
+\bibitem{Wikipedia article on fractional cascading}
+Wikipedia article on fractional cascading \\
+\texttt{https://en.wikipedia.org/wiki/Fractional\_cascading}
 \end{thebibliography}
 
 \end{document}
