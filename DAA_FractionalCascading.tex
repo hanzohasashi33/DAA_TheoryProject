@@ -55,7 +55,7 @@ IMT2019525 Vijay Jaisankar \\
 \setcounter{page}{1}
 
 \section{Abstract}
-        In this paper, we investigate the \textit{Fractional Cascading} technique which is used in building range trees and for fast searching of an element in multiple arrays. In this venture, we introduce and examine \textit{Linear Search}, \textit{Binary Search}, \textit{Bridge Building} and \textit{Fractional Cascading}. We also look at some of the \textit{applications} of this technique, and suggest data structures for its efficient realisation. 
+        In this paper, we investigate the \textit{Fractional Cascading} technique which is used in building range trees and for fast searching of an element in multiple arrays. In this venture, we introduce and examine \textit{Linear Search}, \textit{Binary Search}, \textit{Bridge Building} and \textit{Fractional Cascading}. We also look at some of the \textit{applications} of this technique, and give a video demonstration of its capabilities. 
 
 \section{Problem Statement}
 \textit{Fractional cascading: }You are given an input of $k$ ordered lists of numbers, each of size $n$ as well as a query value $x$. The problem's output is
@@ -311,7 +311,7 @@ As we're taking $\alpha$ = $\frac{1}{2}$, $M_i$ will be the result of merging $M
     %\item If the element came from the same array, i.e, $A_i$, we keep a pointer to the nearest neighbouring elements which are cascaded from $M_{i+1}$
     \item If the element is non cascaded,i.e, If the element is from the Array $A_i$, then the first pointer points to the smallest cascaded element greater than the element in $A_i$ and the second pointer points to the largest element lesser than the element in $A_i$. 
  
-    \item If the element has been cascaded, we keep a pointer to the predecessor of the element in $M_i$ to be able to efficiently find the next element which is a member of the current array; and also a keep a bridge between $M_i$ and $M_{i+1}$ at the position where it is present in both of the arrays.
+    \item If the element has been cascaded, we keep a pointer to the non cascaded predecessor and non cascaded successor of the element in $M_i$ to be able to efficiently find the next and previous element which is a member of the current array; and also a keep a bridge between $M_i$ and $M_{i+1}$ at the position where it is present in both of the arrays.
 \end{itemize}
 Additionally, we add bridges between the pseudo-elements ,i.e,  -$\infty$ and $\infty$ in consecutive arrays.If there is no key of the appropriate type above or below the key,the pointer points to the pseudo-keys at $\pm \infty$, whichever is appropriate.$^{\cite{Fractional cascading notes by Prof Prof.Roberto Tamassia}}$
 These pointers helps to find the position of the query element x in $A_i$ and also in the cascaded arrays below in $O(1)$ time. \\ \\
@@ -324,13 +324,6 @@ To find the location in $M_{i+1}$, we find the \textit{two neighbouring elements
 
 Hence, the time to perform the pre-processing for fractional cascading is O(nk), the total search time per query is $O(k+log n)$ and, the total time taken by the Fractional Cascading algorithm is $O(q(k+logn))$ for $q$ queries, which is an improvement over the previous algorithms.
 
-
-
-% Define new lists $L'_1, . . . , L'_k$ by $L'_k$ = $L_k$, and for $i < k$, let $L'_i$ be the result of merging $L'_{i}$ with every other element of $L'_{i+1}$ Note that $|L'_i| = |L_i| +\frac{1}{2}|L'_{i+1}|$, so $|Li| \leq 2n = O(n).$. 
-% For each $i < k$, keep two pointers from each element. If the element came from $L_i$, keep a pointer to the two neighboring elements from $L'_{i+1}$, and vice versa. These pointers allow us to take information of our placement in $L'_i$ and in O(1) turn it into information about our placement in $L_i$ and our placement in half of $L'_{i+1}$.
-%Now to make a query for x in all k lists is quite straightforward. 
-%First, query $L'_1$ for the location of x with a binary search. Now to find the location of x in $L'_{i+1}$ from the location of x in $L'_i$, find the two neighboring elements in $L'{i+1}$ that came from $L'_i$ using the extra pointers. Then these elements have exactly one element between them in $L'_{i+1}$. To find our actual location in $L'_{i+1}$, we simply do a comparison with that intermediate element. This allows us to turn the information about
-%x’s location in $L'_i$ into information about x’s location in $L'_{i+1}$ in O(1) time, and we can retrieve x’s location in $L_i$ from its location in $L'_i$ in O(1), and thus we can query for x in all k lists in O(k + log n) time.
 
 
 \subsection{Pseudocode}
@@ -348,9 +341,9 @@ Hence, the time to perform the pre-processing for fractional cascading is O(nk),
         % // Insert all elements of the last array at position 0 of MergedArrays % \;
         MergedArrays = MergedArrays.insert(0,all elements of the last array) \;
         MergedArrays = MergedArrays.insert(0,merge the below array with the above array by only taking alternate elements of the below array) \;
-        Generate the boundry case predecessors and successors; $- \infty$ and $+ \infty$ \;
+        Generate the boundary case predecessors and successors; $- \infty$ and $+ \infty$ \;
         %For every element assign a two sized array to hold the pointers to the locations. \;
-        For every element in the merged arrays, assign locations based on the presence of that particular element in $A_i$ and $M_{i+1}$.If the element came from the same array, i.e, $A_i$, we keep a pointer to the nearest neighbouring element on either side from $M_{i+1}$. If the element has been cascaded, we keep a pointer to the predecessor of the element in $M_i$ and also a bridge between $M_i$ and $M_{i+1}$ at the position where it is present in both of the arrays.\;
+        For every element in the merged arrays, assign locations based on the presence of that particular element in $A_i$ and $M_{i+1}$.If the element came from the same array, i.e, $A_i$, we keep a pointer to the nearest neighbouring element on either side from $M_{i+1}$. If the element has been cascaded, we keep a pointer to the non cascaded predecessor and successor of the element in $M_i$ and also a bridge between $M_i$ and $M_{i+1}$ at the position where it is present in both of the arrays.\;
         We then check for the position of the target element in the merged array, then we follow the pointers down to get the positions of the predecessors of the said target element in all of the k arrays. Let's call this array $positions[k]$ \;
         The last step is to scan through $positions[k]$, and see if the respective predecessor is actually the given target, or not. This generates the $[True,False]$ format given in the question and append it to the output array.
     }
@@ -370,29 +363,22 @@ Hence, the time to perform the pre-processing for fractional cascading is O(nk),
     \item List $L_3$: $[2,4,9]$
 \end{enumerate}
 
-\begin{figure}[!h]
+\begin{figure}[H]
     \centering
-    \includegraphics[]{Images/Screenshot_2021-03-15 Fractional Cascading(1).png}
-    \caption{Fractional cascading pre processing for the given question.$^{\cite{Fractional Cascading Demo}}$}
+    \includegraphics[width=\textwidth]{Images/WhatsApp Image 2021-03-17 at 8.19.27 PM.jpeg}
+    \caption{Fractional cascading pre processing for the given question.}
     \label{fig:label}
 \end{figure}
     
 
 
-The figure gives the final MergedArrays and we can also see how the elements are cascaded.(\textbf{NOTE:} The pseudo-elements and some of the pointers are not shown in the figure). Every cascaded element has a pointer to it's predecessor which was initally present in the same array $A_i$ and also has a bridge between merged arrays $M_i$ and $M_{i+1}$ depending on the location of that particular element in both the arrays. The green and pink bridges demonstrate this fact. Also the elements that are present in both $A_i$ and $M_i$ has a pointer to the nearest cascaded element as shown by the purple pointers in the figure.(\textbf{NOTE:} The implementation provided in \cite{Fractional Cascading Demo} is a bit different as it only has one pointer to the nearest cascaded element, whereas our implementation has 2 pointers.) 
+The figure gives the final MergedArrays and we can also see how the elements are cascaded. Every cascaded element has a pointer to it's predecessor and successor which was initally present in the same array $A_i$ as shown by the red curved pointers and also has a bridge between merged arrays $M_i$ and $M_{i+1}$ depending on the location of that particular element in both the arrays. The red lines denote the bridges. Also the elements that are present in both $A_i$ and $M_i$ has a pointer to the nearest cascaded elements as shown by the blue and green lines in the figure.
 
 
+Here, the search query element, $x = 4$. So we start at $M_1$ and search for 4 using a binary search which will in turn return the first 4 in the array, i.e, the element present in index 1. Now we will follow this index's pointer to the nearest cascaded element which is 4 present at index 2. However, this is a cascaded element from the below arrays and hence will have a bridge to the below arrays. So the algorithm follows the bridge and goes to index 1 of $M_2$. However, this elements is also cascaded, so we check whether the previous element is equal to 4 or not. The previous element in this case is 2 present at index 0 of $M_2$ which is not equal to the query element. So we again go to the nearest cascaded element via 2's pointer and reach the next merged array which is $M_3$. Here the bridge's endpoint is the query element and it will return true and the algorithm is terminated as we have reached the lowest array. Hence the output will be [\textit{True},\textit{False},\textit{True}]. \\
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[]{Images/Screenshot_2021-03-15 Fractional Cascading(2).png}
-    \caption{Fractional cascading output(search) for the given question.$^{\cite{Fractional Cascading Demo}}$}
-    \label{fig:label}
-\end{figure}
+We have made a short walkthrough of the above example which can be found on youtube in this \href{https://www.youtube.com/watch?v=eUQtziH6cDo}{Link(click here)}$^\cite{Youtube Walkthrough}$
 
-Here, the search query element, x = 4. So we start at $M_1$ and search for 4 using a binary search which will in turn return the first 4 in the array, i.e, the element present in index 1. Now we will follow this index's pointer to the nearest cascaded element which is 4 present at index 2. However, this is a cascaded element from the below arrays and hence will have a bridge to the below arrays. So the algorithm follows the bridge and goes to index 1 of $M_2$. However, this elements is also cascaded, so we check whether the previous element is equal to 4 or not. The previous element in this case is 2 present at index 0 of $M_2$ which is not equal to the query element. So we again go to the nearest cascaded element via 2's pointer and reach the next merged array which is $M_3$. Here the bridge's endpoint is the query element and it will return true and the algorithm is terminated as we have reached the lowest array. Hence the output will be [\textit{True},\textit{False},\textit{True}].
-
-\pagebreak
 
 \subsection{Proof of Correctness}
 To prove that our Fractional Cascading algorithm is correct, we perform the following steps.
@@ -401,7 +387,7 @@ To prove that our Fractional Cascading algorithm is correct, we perform the foll
     \item We show that our algorithm and X produce the same output. This forms the proof of correctness of our algorithm.
 \end{itemize}
 
-Note that we already have a candidate for algorithm X; Our \textit{improved brute force algorithm} which uses binary search.
+Note that we already have a candidate for algorithm X; Our \textit{improved brute force algorithm} which uses binary search which we have already proved earlier.
 
 %proof of correctness of binary search.
 
@@ -416,14 +402,14 @@ We will follow the concept of universal generalization here; lets consider the $
 Now there are two possibilities here when our control reaches array[r] 
 \begin{itemize}
     \item We find element $x$ and it is not cascaded from below then we can say that it returns \textit{true} which is exactly what algorithm X returns in the same situation.
-    \item We find element $x$ but it is cascaded from below,then, our control moves into the nearest neighbours of the non-cascaded $x$. As x $\in$ array[r], \textit{native x} will be one of the neighbours of the non-cascaded $x$. So, the control gets transferred to the native $x$, and this case gets \textit{transformed} into the previous case. Hence, we return \textit{true} which is exactly what algorithm X returns in the same situation.
+    \item We find element $x$ but it is cascaded from below,then, our control moves into the nearest non-cascaded neighbours of $x$. As x $\in$ array[r], \textit{native x} will be one of the neighbours of the cascaded $x$. So, the control gets transferred to the native $x$, and this case gets \textit{transformed} into the previous case. Hence, we return \textit{true} which is exactly what algorithm X returns in the same situation.
 \end{itemize} \\ \\ \\
 Now, \textbf{let's continue with situation 2}.
 Now, there are two possibilities here when our control reaches array[r] 
 
 \begin{itemize}
     \item We find element \textit{x} but it is cascaded from below. So we look at its nearest non-cascaded neighbours which are guaranteed not to be $x$(as $x$ $\notin$ array[r] by supposition). So we can return \textit{false}, which is exactly what algorithm X returns in this situation.
-    \item We find an element which is not equals to $x$. Now, regardless of whether it's cascaded or not when we traverse to the pointers, we are guaranteed not to find $x$ so we return $false$, which is exactly what algorithm X returns in this situation.
+    \item We find an element which is not equal to $x$. Now, regardless of whether it's cascaded or not when we traverse to the pointers, we are guaranteed not to find $x$ so we return $false$, which is exactly what algorithm X returns in this situation.
 \end{itemize}
 
 
@@ -480,7 +466,12 @@ A blog about fractional cascading and bridge building by Edward Z. Yang \\
 
 \bibitem{Wikipedia article on fractional cascading}
 Wikipedia article on fractional cascading \\
-\texttt{https://en.wikipedia.org/wiki/Fractional\_cascading}
-\end{thebibliography}
+\texttt{https://en.wikipedia.org/wiki/Fractional\_cascading} \\
 
+
+\bibitem{Youtube Walkthrough}
+Our youtube walkthrough for fractional cascading \\
+\texttt{https://www.youtube.com/watch?v=eUQtziH6cDo} \\
+
+\end{thebibliography}
 \end{document}
