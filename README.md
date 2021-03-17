@@ -1,4 +1,4 @@
-# DAA TheoryProject
+# DAA Theory Project
 
 
-A DAA Theory Project explaining about fractional cascading
+## Topic: Fractional cascading
