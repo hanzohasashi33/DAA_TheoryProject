@@ -79,6 +79,7 @@ As each element is compared at most once, the time complexity is $O(n)$, where $
 
 This algorithm forms the basis of the simplest solution to our problem: We just run linear search on each of the $k$ lists. If we have $q$ queries, this takes $O(q \cdot k \cdot n)$ time, which is a lot and in real world situations, if $k$, $q$, and $n$ are even moderately large, the time taken would become astronomical. \\ 
 
+\subsection{Pseudocode}
 \begin{tcolorbox}[blanker,width=(\linewidth-3.5cm)]
 \begin{algorithm}[H]
     \SetAlgoLined
@@ -237,7 +238,7 @@ In this example, we are searching for 8 in all 3 arrays. We can clearly see the 
 
 
 
-\subsection{Algorithm}
+\subsection{Pseudocode}
 \begin{tcolorbox}[blanker,width=(\linewidth-3.5cm)]
 \begin{algorithm}[H]
     \SetAlgoLined
@@ -310,12 +311,12 @@ As we're taking $\alpha$ = $\frac{1}{2}$, $M_i$ will be the result of merging $M
     %\item If the element came from the same array, i.e, $A_i$, we keep a pointer to the nearest neighbouring elements which are cascaded from $M_{i+1}$
     \item If the element is non cascaded,i.e, If the element is from the Array $A_i$, then the first pointer points to the smallest cascaded element greater than the element in $A_i$ and the second pointer points to the largest element lesser than the element in $A_i$. 
  
-    \item if the element has been cascaded, we keep a pointer to the predecessor of the element in $M_i$ and also a keep a bridge between $M_i$ and $M_{i+1}$ at the position where it is present in both of the arrays.
+    \item If the element has been cascaded, we keep a pointer to the predecessor of the element in $M_i$ to be able to efficiently find the next element which is a member of the current array; and also a keep a bridge between $M_i$ and $M_{i+1}$ at the position where it is present in both of the arrays.
 \end{itemize}
 Additionally, we add bridges between the pseudo-elements ,i.e,  -$\infty$ and $\infty$ in consecutive arrays.If there is no key of the appropriate type above or below the key,the pointer points to the pseudo-keys at $\pm \infty$, whichever is appropriate.$^{\cite{Fractional cascading notes by Prof Prof.Roberto Tamassia}}$
 These pointers helps to find the position of the query element x in $A_i$ and also in the cascaded arrays below in $O(1)$ time. \\ \\
 \textbf{Note}: Since we are merging every alternate element of the below list to the current list, we have 
-$|M_i| = |A_i| +\frac{1}{2}|M_{i+1}|$, which in turn ensures that $|A_i| \leq 2n = O(n) ^{\cite{MIT OCW Notes on Fractional Cascading}}$. \\
+$|M_i| = |A_i| +\frac{1}{2}|M_{i+1}|$, which in turn ensures that $|A_i| \leq 2n = O(n).$ \\
 
 After we perform the aforementioned pre-processing, querying $x$ in all $k$ lists is done as follows:
 First, we make a query for x in $M_1$ using a binary search in $O(\log n)$. Once we have found the position of $x$ in $M_1$, we use the \textit{cascaded pointers} to find the position of x in $M_2$. Generalising this step, once we found the position of x in $M_i$ where i $<$ k, we use the cascaded pointers to find the position of x in $M_{i+1}$. \\ \\
@@ -332,7 +333,7 @@ Hence, the time to perform the pre-processing for fractional cascading is O(nk),
 %x’s location in $L'_i$ into information about x’s location in $L'_{i+1}$ in O(1) time, and we can retrieve x’s location in $L_i$ from its location in $L'_i$ in O(1), and thus we can query for x in all k lists in O(k + log n) time.
 
 
-\subsection{PseudoCode}
+\subsection{Pseudocode}
 \begin{tcolorbox}[blanker,width=(\linewidth-3.5cm)]
 \begin{algorithm}[H]
     \SetAlgoLined
