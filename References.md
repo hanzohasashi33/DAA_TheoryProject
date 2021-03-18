@@ -7,3 +7,4 @@ https://ravix339.github.io/FractionalCascading/index.html <br>
 https://ravix339.github.io/FractionalCascading/Demo.html <br>
 http://blog.ezyang.com/2012/03/you-could-have-invented-fractional-cascading/ <br>
 https://en.wikipedia.org/wiki/Fractional\_cascading  <br>
+Walkthrough of an example: https://www.youtube.com/watch?v=eUQtziH6cDo <br>
